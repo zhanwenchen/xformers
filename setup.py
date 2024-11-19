@@ -235,7 +235,7 @@ def get_flash_attention2_extensions(cuda_version: int, extra_compile_args):
             name="xformers._C_flashattention",
             sources=[os.path.join(flash_root, path) for path in sources],
             extra_compile_args={
-                "cxx": extra_compile_args.get("cxx", []) + common_extra_compile_args,
+                "cxx": extra_compile_args.get("cxx", []) + common_extra_compile_args + ["-march=native"],
                 "nvcc": extra_compile_args.get("nvcc", [])
                 + [
                     "-O3",
@@ -321,7 +321,7 @@ def get_flash_attention3_extensions(cuda_version: int, extra_compile_args):
             name="xformers._C_flashattention3",
             sources=[os.path.join(flash_root, path) for path in sources],
             extra_compile_args={
-                "cxx": extra_compile_args.get("cxx", []),
+                "cxx": extra_compile_args.get("cxx", []) + ["-march=native"],
                 "nvcc": extra_compile_args.get("nvcc", [])
                 + [
                     "-O3",
@@ -421,7 +421,7 @@ def get_extensions():
 
     define_macros = []
 
-    extra_compile_args = {"cxx": ["-O3", "-std=c++17"]}
+    extra_compile_args = {"cxx": ["-O3", "-std=c++17", "-march=native"]}
     if sys.platform == "win32":
         define_macros += [("xformers_EXPORTS", None)]
         extra_compile_args["cxx"].extend(
@@ -554,7 +554,7 @@ def get_extensions():
         arch_list = os.getenv("HIP_ARCHITECTURES", "native").split()
 
         extra_compile_args = {
-            "cxx": ["-O3", "-std=c++17"] + generator_flag,
+            "cxx": ["-O3", "-std=c++17", "-march=native"] + generator_flag,
             "nvcc": [
                 "-O3",
                 "-std=c++17",
